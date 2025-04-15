@@ -7,8 +7,12 @@ export interface PlatformData {
 
 export interface LevelData {
   platforms: PlatformData[];
-  background?: string; // Optional background image
-  backgroundColor?: number; // Optional color
+  background: {
+    base: string;
+    hills: string;
+    tiles: string;
+  };
+  platformType: string;
 }
 
 // Define all levels
@@ -31,7 +35,12 @@ export const LEVELS: LevelData[] = [
       { x: 650, y: 130, width: 1 },
       { x: 350, y: 70, width: 1 },
     ],
-    backgroundColor: 0x87ceeb,
+    background: {
+      base: "bg3_background",
+      hills: "bg3_hills",
+      tiles: "bg3_tiles",
+    },
+    platformType: "tileBlue",
   },
 
   // Level 2 - Different pattern
@@ -55,7 +64,12 @@ export const LEVELS: LevelData[] = [
       { x: 200, y: 100, width: 1 },
       { x: 512, y: 50, width: 3 },
     ],
-    backgroundColor: 0x6bb7bd,
+    background: {
+      base: "bg4_background",
+      hills: "bg4_hills",
+      tiles: "bg4_tiles",
+    },
+    platformType: "tileGreen",
   },
 
   // Level 3 - Vertical challenge
@@ -78,7 +92,12 @@ export const LEVELS: LevelData[] = [
       { x: 512, y: 100, width: 0.5 },
       { x: 512, y: 50, width: 1 },
     ],
-    backgroundColor: 0x9370db,
+    background: {
+      base: "bg2_background",
+      hills: "bg2_hills",
+      tiles: "bg2_tiles",
+    },
+    platformType: "tileGreen",
   },
 
   // Level 4 - Stair pattern
@@ -100,6 +119,11 @@ export const LEVELS: LevelData[] = [
       { x: 512, y: 140, width: 3 },
       { x: 512, y: 70, width: 1 },
     ],
-    backgroundColor: 0xff9966,
+    background: {
+      base: "bg1_background",
+      hills: "bg1_hills",
+      tiles: "bg1_tiles",
+    },
+    platformType: "tileBrown",
   },
 ];

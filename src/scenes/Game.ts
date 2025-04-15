@@ -41,10 +41,6 @@ export class Game extends Scene {
   create() {
     this.camera = this.cameras.main;
 
-    // Add background
-    this.background = this.add.image(512, 384, "background");
-    this.background.setAlpha(0.5);
-
     // Get the analog input system from registry
     this.analogInput = this.registry.get("analogInput") || new AnalogInput();
 
@@ -54,6 +50,28 @@ export class Game extends Scene {
     // Set current level
     const levelIndex = this.registry.get("currentLevel") || 0;
     this.levelManager.setLevel(levelIndex);
+
+    // Get current level data
+    const levelData = this.levelManager.getCurrentLevelData();
+
+    // Create layered background
+    // Base background
+    this.background = this.add.image(512, 384, levelData.background.base);
+    this.background.setScale(
+      1024 / this.background.width,
+      768 / this.background.height
+    );
+    this.background.setAlpha(1);
+
+    // Tiles layer (behind hills)
+    const tiles = this.add.image(512, 384, levelData.background.tiles);
+    tiles.setScale(1024 / tiles.width, 768 / tiles.height);
+    tiles.setAlpha(0.9);
+
+    // Hills layer (on top of tiles)
+    const hills = this.add.image(512, 384, levelData.background.hills);
+    hills.setScale(1024 / hills.width, 768 / hills.height);
+    hills.setAlpha(0.8);
 
     // Create the level
     this.platforms = this.levelManager.createLevel();

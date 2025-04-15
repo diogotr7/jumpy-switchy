@@ -32,11 +32,6 @@ export class LevelManager {
     // Get current level data
     const levelData = this.getCurrentLevelData();
 
-    // Set background color if specified
-    if (levelData.backgroundColor) {
-      this.scene.cameras.main.setBackgroundColor(levelData.backgroundColor);
-    }
-
     // Create all platforms from level data
     levelData.platforms.forEach((platform) => {
       this.createPlatform(platform.x, platform.y, platform.width);
@@ -48,14 +43,18 @@ export class LevelManager {
 
   private createPlatform(x: number, y: number, width: number): void {
     // Create platform with given position and width
-    this.platforms.create(x, y, "platform").setScale(width, 0.5).refreshBody();
+    const levelData = this.getCurrentLevelData();
+    this.platforms
+      .create(x, y, levelData.platformType)
+      .setScale(width, 0.5)
+      .refreshBody();
   }
 
   createWalls(): Phaser.Physics.Arcade.StaticGroup {
     // Create left and right walls to prevent falling off
-    this.platforms.create(0, 384, "platform").setScale(0.5, 30).refreshBody();
+    this.platforms.create(0, 384, "blockBrown").setScale(0.5, 30).refreshBody();
     this.platforms
-      .create(1024, 384, "platform")
+      .create(1024, 384, "blockBrown")
       .setScale(0.5, 30)
       .refreshBody();
 
