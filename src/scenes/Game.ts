@@ -15,6 +15,10 @@ export class Game extends Scene {
   levelManager: LevelManager;
   platforms: Phaser.Physics.Arcade.StaticGroup;
 
+  // Level end zone
+  endPosition: { x: number; y: number };
+  endTriggerActive: boolean = false;
+
   // UI elements
   debugText: Phaser.GameObjects.Text;
   instructionsText: Phaser.GameObjects.Text;
@@ -30,6 +34,7 @@ export class Game extends Scene {
 
     // Store the level in registry for game over
     this.registry.set("currentLevel", levelIndex);
+    this.endTriggerActive = false;
   }
 
   preload() {
@@ -78,6 +83,8 @@ export class Game extends Scene {
 
     // Get player start position
     const startPos = this.levelManager.getPlayerStartPosition();
+    // Get end position
+    this.endPosition = this.levelManager.getEndPosition();
 
     // Create player at start position
     this.player = new Player(
@@ -102,10 +109,6 @@ export class Game extends Scene {
     this.cameras.main.setBounds(0, 0, 1024, 768);
     this.cameras.main.setScroll(0, 0);
 
-    // Add debug display
-    this.createDebugDisplay();
-
-    // Add instruction text
     this.createInstructions();
 
     // Add level display
@@ -124,13 +127,72 @@ export class Game extends Scene {
     // Update jump preview
     this.jumpPreview.update();
 
-    // Update debug display
-    this.updateDebugDisplay();
+    // Check for level completion (reaching the end trigger)
+    this.checkLevelCompletion();
 
-    // Check for level completion (reaching the top platform)
+    // Check if player fell off the level
+    if (this.player.y > 800) {
+      this.restartLevel();
+    }
+  }
+
+  private checkLevelCompletion(): void {
+    // Only check if we have a valid end position and haven't already triggered completion
+    if (this.endPosition.x && this.endPosition.y && !this.endTriggerActive) {
+      const endTriggerRadius = 50; // Size of the invisible trigger zone
+
+      // Calculate distance from player to end trigger
+      const dx = this.player.x - this.endPosition.x;
+      const dy = this.player.y - this.endPosition.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // If player is close enough to the end trigger
+      if (distance < endTriggerRadius) {
+        this.endTriggerActive = true;
+        this.showLevelCompleteMessage();
+
+        // Wait a moment before moving to next level
+        this.time.delayedCall(1500, () => {
+          this.nextLevel();
+        });
+      }
+    }
+
+    // Fallback for levels without end triggers (or for testing)
+    // Check if player reached the top platform (near where the end usually is)
     if (this.player.y < 50) {
       this.nextLevel();
     }
+  }
+
+  private showLevelCompleteMessage(): void {
+    const levelCompleteText = this.add
+      .text(512, 300, "Level Complete!", {
+        fontFamily: "Arial",
+        fontSize: "48px",
+        backgroundColor: "#00000080",
+        padding: { x: 20, y: 10 },
+        color: "#ffffff",
+        align: "center",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(100);
+
+    // Add a simple animation
+    this.tweens.add({
+      targets: levelCompleteText,
+      scale: 1.2,
+      duration: 500,
+      yoyo: true,
+      repeat: 1,
+    });
+  }
+
+  private restartLevel(): void {
+    // Restart the current level
+    const currentLevel = this.registry.get("currentLevel") || 0;
+    this.scene.restart({ level: currentLevel });
   }
 
   private nextLevel(): void {
@@ -147,50 +209,16 @@ export class Game extends Scene {
     }
   }
 
-  private createDebugDisplay() {
-    this.debugText = this.add
-      .text(20, 20, "", {
+  private createInstructions() {
+    this.instructionsText = this.add
+      .text(100, 40, "A/D: Move\n" + "Space: Charge Jump\n" + "N skip level", {
         fontFamily: "Arial",
-        fontSize: "16px",
+        fontSize: "18px",
         backgroundColor: "#00000080",
         padding: { x: 10, y: 5 },
         color: "#ffffff",
+        align: "center",
       })
-      .setScrollFactor(0)
-      .setDepth(100);
-  }
-
-  private updateDebugDisplay() {
-    const analog = this.analogInput;
-
-    this.debugText.setText(
-      [
-        `W: ${analog.getKeyValue("W").toFixed(0)}%`,
-        `A: ${analog.getKeyValue("A").toFixed(0)}%`,
-        `D: ${analog.getKeyValue("D").toFixed(0)}%`,
-        `SPACE: ${this.player.isChargingJumpState() ? "CHARGING" : "RELEASED"}`,
-        `Charging: ${this.player.isChargingJumpState()}`,
-      ].join("\n")
-    );
-  }
-
-  private createInstructions() {
-    this.instructionsText = this.add
-      .text(
-        512,
-        50,
-        "A/D: Move  |  SPACE: Charge Jump\n" +
-          "While charging: W controls height, A/D control direction\n" +
-          "Press N to skip to next level (testing)",
-        {
-          fontFamily: "Arial",
-          fontSize: "18px",
-          backgroundColor: "#00000080",
-          padding: { x: 10, y: 5 },
-          color: "#ffffff",
-          align: "center",
-        }
-      )
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(100);
@@ -201,8 +229,8 @@ export class Game extends Scene {
 
     this.levelText = this.add
       .text(
-        512,
-        120,
+        1024 - 65,
+        25,
         `Level ${level + 1}/${this.levelManager.getTotalLevels()}`,
         {
           fontFamily: "Arial",

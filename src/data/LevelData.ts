@@ -25,10 +25,11 @@ export interface LevelData {
   platformType: string;
 }
 
-// Define all levels
+// Define all levels - ensured to be properly aligned and consistent
 export const LEVELS: LevelData[] = [
   {
     grid: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W              E              W",
       "W           PPPPP             W",
       "W                             W",
@@ -50,9 +51,8 @@ export const LEVELS: LevelData[] = [
       "W           PPP               W",
       "W                             W",
       "W      PPP                    W",
-      "W                             W",
       "W    S                        W",
-      "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+      "WGGGGGGGGGGGGGGGGGGGGGGGGGGGGGW",
     ],
     background: {
       base: "bg3_background",
@@ -63,6 +63,7 @@ export const LEVELS: LevelData[] = [
   },
   {
     grid: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W              E              W",
       "W           PPPPP             W",
       "W                             W",
@@ -84,9 +85,8 @@ export const LEVELS: LevelData[] = [
       "W           PPP               W",
       "W                             W",
       "W     PPP                     W",
-      "W                             W",
       "W    S                        W",
-      "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+      "WGGGGGGGGGGGGGGGGGGGGGGGGGGGGGW",
     ],
     background: {
       base: "bg4_background",
@@ -97,30 +97,30 @@ export const LEVELS: LevelData[] = [
   },
   {
     grid: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W              E              W",
-      "W           PPPPP            W",
+      "W           PPPPP             W",
       "W                             W",
       "W                             W",
-      "W          P     P           W",
+      "W          P     P            W",
       "W                             W",
       "W                             W",
-      "W     P           P          W",
+      "W     P           P           W",
       "W                             W",
       "W                             W",
-      "W          P     P           W",
+      "W          P     P            W",
       "W                             W",
       "W                             W",
-      "W     P           P          W",
+      "W     P           P           W",
       "W                             W",
       "W                             W",
-      "W          P     P           W",
+      "W          P     P            W",
       "W                             W",
       "W                             W",
-      "W     P           P          W",
-      "W                             W",
+      "W     P           P           W",
       "W                             W",
       "W    S                        W",
-      "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+      "WGGGGGGGGGGGGGGGGGGGGGGGGGGGGGW",
     ],
     background: {
       base: "bg2_background",
@@ -131,6 +131,7 @@ export const LEVELS: LevelData[] = [
   },
   {
     grid: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W              E              W",
       "W           PPPPP             W",
       "W                             W",
@@ -152,9 +153,8 @@ export const LEVELS: LevelData[] = [
       "W                             W",
       "W                PPP          W",
       "W                             W",
-      "W                             W",
       "W    S                        W",
-      "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+      "WGGGGGGGGGGGGGGGGGGGGGGGGGGGGGW",
     ],
     background: {
       base: "bg1_background",
