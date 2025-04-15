@@ -3,6 +3,7 @@ import { AnalogInput } from "../utils/AnalogInput";
 import { Player } from "../entities/Player";
 import { JumpPreview } from "../entities/JumpPreview";
 import { LevelManager } from "../managers/LevelManager";
+import { GRID_SIZE, GRID_HEIGHT, GRID_WIDTH } from "../data/LevelData";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -59,23 +60,45 @@ export class Game extends Scene {
     // Get current level data
     const levelData = this.levelManager.getCurrentLevelData();
 
+    // Calculate world dimensions based on grid size
+    const worldWidth = GRID_WIDTH * GRID_SIZE;
+    const worldHeight = GRID_HEIGHT * GRID_SIZE;
+
+    // Set physics world bounds
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
+
     // Create layered background
+    // Calculate the visible world height (don't extend too far below ground)
+    const visibleWorldHeight = (GRID_HEIGHT - 0.5) * GRID_SIZE;
+
     // Base background
-    this.background = this.add.image(512, 384, levelData.background.base);
+    this.background = this.add.image(
+      worldWidth / 2,
+      visibleWorldHeight / 2,
+      levelData.background.base
+    );
     this.background.setScale(
-      1024 / this.background.width,
-      768 / this.background.height
+      worldWidth / this.background.width,
+      visibleWorldHeight / this.background.height
     );
     this.background.setAlpha(1);
 
     // Tiles layer (behind hills)
-    const tiles = this.add.image(512, 384, levelData.background.tiles);
-    tiles.setScale(1024 / tiles.width, 768 / tiles.height);
+    const tiles = this.add.image(
+      worldWidth / 2,
+      visibleWorldHeight / 2,
+      levelData.background.tiles
+    );
+    tiles.setScale(worldWidth / tiles.width, visibleWorldHeight / tiles.height);
     tiles.setAlpha(0.9);
 
     // Hills layer (on top of tiles)
-    const hills = this.add.image(512, 384, levelData.background.hills);
-    hills.setScale(1024 / hills.width, 768 / hills.height);
+    const hills = this.add.image(
+      worldWidth / 2,
+      visibleWorldHeight / 2,
+      levelData.background.hills
+    );
+    hills.setScale(worldWidth / hills.width, visibleWorldHeight / hills.height);
     hills.setAlpha(0.8);
 
     // Create the level
@@ -101,12 +124,19 @@ export class Game extends Scene {
     // Add collisions
     this.physics.add.collider(this.player, this.platforms);
 
-    // Setup camera to follow player
-    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
-    this.cameras.main.setFollowOffset(0, 0);
-    this.cameras.main.setLerp(0.1, 0.1);
-    this.cameras.main.setDeadzone(0, 200);
-    this.cameras.main.setBounds(0, 0, 1024, 768);
+    // Setup camera to follow player with improved configuration for taller levels
+    this.cameras.main.startFollow(this.player, false, 0.1, 0.1, 0, 180);
+
+    // Increase deadzone vertical size for smoother vertical scrolling
+    // Make the deadzone taller on the bottom to see more of what's below
+    this.cameras.main.setDeadzone(100, 300);
+
+    // Calculate the ground position (last row)
+    const groundY = (GRID_HEIGHT - 1) * GRID_SIZE;
+
+    // Set camera bounds to match the world but don't go below the ground
+    // We set the height to be the ground position plus an offset to show the ground tiles
+    this.cameras.main.setBounds(0, 0, worldWidth, groundY + GRID_SIZE);
     this.cameras.main.setScroll(0, 0);
 
     this.createInstructions();
@@ -129,11 +159,6 @@ export class Game extends Scene {
 
     // Check for level completion (reaching the end trigger)
     this.checkLevelCompletion();
-
-    // Check if player fell off the level
-    if (this.player.y > 800) {
-      this.restartLevel();
-    }
   }
 
   private checkLevelCompletion(): void {
@@ -160,15 +185,21 @@ export class Game extends Scene {
   }
 
   private showLevelCompleteMessage(): void {
+    // Display level complete message at camera center instead of world center
     const levelCompleteText = this.add
-      .text(512, 300, "Level Complete!", {
-        fontFamily: "Arial",
-        fontSize: "48px",
-        backgroundColor: "#00000080",
-        padding: { x: 20, y: 10 },
-        color: "#ffffff",
-        align: "center",
-      })
+      .text(
+        this.cameras.main.midPoint.x,
+        this.cameras.main.midPoint.y - 100,
+        "Level Complete!",
+        {
+          fontFamily: "Arial",
+          fontSize: "48px",
+          backgroundColor: "#00000080",
+          padding: { x: 20, y: 10 },
+          color: "#ffffff",
+          align: "center",
+        }
+      )
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(100);
