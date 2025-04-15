@@ -1,12 +1,22 @@
-// Level data structure
-export interface PlatformData {
-  x: number;
-  y: number;
-  width: number;
+// Grid constants
+export const GRID_SIZE = 32; // Size of each grid cell in pixels
+export const GRID_WIDTH = 32; // Number of cells wide
+export const GRID_HEIGHT = 24; // Number of cells tall
+
+// Level element types
+export enum LevelElement {
+  EMPTY = " ", // Empty space
+  GROUND = "G", // Ground platform
+  PLATFORM = "P", // Regular platform
+  WALL = "W", // Wall block
+  COIN = "C", // Bonus coin
+  END = "E", // End trigger
+  PLAYER = "S", // Player start position
 }
 
+// Level data structure
 export interface LevelData {
-  platforms: PlatformData[];
+  grid: string[][]; // 2D array of level elements
   background: {
     base: string;
     hills: string;
@@ -15,25 +25,60 @@ export interface LevelData {
   platformType: string;
 }
 
+// Helper function to create an empty grid
+export function createEmptyGrid(): string[][] {
+  return Array(GRID_HEIGHT)
+    .fill(null)
+    .map(() => Array(GRID_WIDTH).fill(LevelElement.EMPTY));
+}
+
+// Helper function to create a row of elements
+function createRow(element: string): string[] {
+  return Array(GRID_WIDTH).fill(element);
+}
+
+// Helper function to create side walls
+function createSideWalls(): string[] {
+  return ["W", ...Array(GRID_WIDTH - 2).fill(LevelElement.EMPTY), "W"];
+}
+
+// Helper function to create a platform at a specific position
+function createPlatformRow(platformX: number, width: number = 1): string[] {
+  const row = createSideWalls();
+  for (let i = 0; i < width; i++) {
+    if (platformX + i < GRID_WIDTH - 1) {
+      // Don't overwrite the right wall
+      row[platformX + i] = LevelElement.PLATFORM;
+    }
+  }
+  return row;
+}
+
 // Define all levels
 export const LEVELS: LevelData[] = [
-  // Level 1 - Original layout
+  // Level 1 - Original ascending platforms
   {
-    platforms: [
-      // Ground platform
-      { x: 512, y: 768, width: 20 },
+    grid: [
+      // Top walls
+      createSideWalls(),
+      // Empty rows
+      ...Array(5)
+        .fill(null)
+        .map(() => createSideWalls()),
       // Ascending platforms
-      { x: 300, y: 700, width: 4 },
-      { x: 700, y: 650, width: 3 },
-      { x: 200, y: 580, width: 3 },
-      { x: 550, y: 510, width: 2 },
-      { x: 300, y: 440, width: 2 },
-      { x: 700, y: 380, width: 2 },
-      { x: 450, y: 320, width: 1.5 },
-      { x: 200, y: 260, width: 1.5 },
-      { x: 400, y: 190, width: 1 },
-      { x: 650, y: 130, width: 1 },
-      { x: 350, y: 70, width: 1 },
+      createPlatformRow(9, 1), // y: 320
+      createPlatformRow(21, 1), // y: 380
+      createPlatformRow(12, 1), // y: 440
+      createPlatformRow(17, 1), // y: 510
+      createPlatformRow(9, 1), // y: 580
+      createPlatformRow(21, 1), // y: 650
+      createPlatformRow(14, 1), // y: 700
+      // Empty rows
+      ...Array(4)
+        .fill(null)
+        .map(() => createSideWalls()),
+      // Ground row
+      createRow(LevelElement.GROUND),
     ],
     background: {
       base: "bg3_background",
@@ -43,26 +88,31 @@ export const LEVELS: LevelData[] = [
     platformType: "tileBlue",
   },
 
-  // Level 2 - Different pattern
+  // Level 2 - Original zigzag pattern
   {
-    platforms: [
-      // Ground
-      { x: 512, y: 768, width: 20 },
+    grid: [
+      // Top walls
+      createSideWalls(),
+      // Empty rows
+      ...Array(5)
+        .fill(null)
+        .map(() => createSideWalls()),
       // Zigzag pattern
-      { x: 200, y: 700, width: 3 },
-      { x: 400, y: 650, width: 2 },
-      { x: 600, y: 600, width: 2 },
-      { x: 800, y: 550, width: 2 },
-      { x: 600, y: 500, width: 2 },
-      { x: 400, y: 450, width: 2 },
-      { x: 200, y: 400, width: 2 },
-      { x: 400, y: 350, width: 1.5 },
-      { x: 600, y: 300, width: 1.5 },
-      { x: 800, y: 250, width: 1 },
-      { x: 600, y: 200, width: 1 },
-      { x: 400, y: 150, width: 1 },
-      { x: 200, y: 100, width: 1 },
-      { x: 512, y: 50, width: 3 },
+      createPlatformRow(6, 1), // y: 300
+      createPlatformRow(12, 1), // y: 350
+      createPlatformRow(6, 1), // y: 400
+      createPlatformRow(12, 1), // y: 450
+      createPlatformRow(6, 1), // y: 500
+      createPlatformRow(12, 1), // y: 550
+      createPlatformRow(6, 1), // y: 600
+      createPlatformRow(12, 1), // y: 650
+      createPlatformRow(6, 1), // y: 700
+      // Empty rows
+      ...Array(2)
+        .fill(null)
+        .map(() => createSideWalls()),
+      // Ground row
+      createRow(LevelElement.GROUND),
     ],
     background: {
       base: "bg4_background",
@@ -72,25 +122,31 @@ export const LEVELS: LevelData[] = [
     platformType: "tileGreen",
   },
 
-  // Level 3 - Vertical challenge
+  // Level 3 - Original vertical challenge
   {
-    platforms: [
-      // Ground
-      { x: 512, y: 768, width: 20 },
-      // Central column with small platforms
-      { x: 512, y: 700, width: 3 },
-      { x: 512, y: 620, width: 2 },
-      { x: 512, y: 550, width: 1.5 },
-      { x: 412, y: 500, width: 1 },
-      { x: 612, y: 450, width: 1 },
-      { x: 512, y: 400, width: 1 },
-      { x: 412, y: 350, width: 0.8 },
-      { x: 612, y: 300, width: 0.8 },
-      { x: 512, y: 250, width: 0.8 },
-      { x: 462, y: 200, width: 0.6 },
-      { x: 562, y: 150, width: 0.6 },
-      { x: 512, y: 100, width: 0.5 },
-      { x: 512, y: 50, width: 1 },
+    grid: [
+      // Top walls
+      createSideWalls(),
+      // Empty rows
+      ...Array(5)
+        .fill(null)
+        .map(() => createSideWalls()),
+      // Vertical platforms
+      createPlatformRow(16, 1), // y: 300
+      createPlatformRow(16, 1), // y: 350
+      createPlatformRow(16, 1), // y: 400
+      createPlatformRow(16, 1), // y: 450
+      createPlatformRow(16, 1), // y: 500
+      createPlatformRow(16, 1), // y: 550
+      createPlatformRow(16, 1), // y: 600
+      createPlatformRow(16, 1), // y: 650
+      createPlatformRow(16, 1), // y: 700
+      // Empty rows
+      ...Array(2)
+        .fill(null)
+        .map(() => createSideWalls()),
+      // Ground row
+      createRow(LevelElement.GROUND),
     ],
     background: {
       base: "bg2_background",
@@ -100,24 +156,30 @@ export const LEVELS: LevelData[] = [
     platformType: "tileGreen",
   },
 
-  // Level 4 - Stair pattern
+  // Level 4 - Original stair pattern
   {
-    platforms: [
-      // Ground
-      { x: 512, y: 768, width: 20 },
-      // Left stairs
-      { x: 100, y: 700, width: 2 },
-      { x: 200, y: 630, width: 2 },
-      { x: 300, y: 560, width: 2 },
-      { x: 400, y: 490, width: 2 },
-      // Right stairs
-      { x: 924, y: 420, width: 2 },
-      { x: 824, y: 350, width: 2 },
-      { x: 724, y: 280, width: 2 },
-      { x: 624, y: 210, width: 2 },
-      // Top platform
-      { x: 512, y: 140, width: 3 },
-      { x: 512, y: 70, width: 1 },
+    grid: [
+      // Top walls
+      createSideWalls(),
+      // Empty rows
+      ...Array(5)
+        .fill(null)
+        .map(() => createSideWalls()),
+      // Stair pattern
+      createPlatformRow(3, 1), // y: 320
+      createPlatformRow(6, 1), // y: 380
+      createPlatformRow(9, 1), // y: 440
+      createPlatformRow(12, 1), // y: 500
+      createPlatformRow(15, 1), // y: 560
+      createPlatformRow(18, 1), // y: 620
+      createPlatformRow(21, 1), // y: 680
+      createPlatformRow(24, 1), // y: 740
+      // Empty rows
+      ...Array(3)
+        .fill(null)
+        .map(() => createSideWalls()),
+      // Ground row
+      createRow(LevelElement.GROUND),
     ],
     background: {
       base: "bg1_background",

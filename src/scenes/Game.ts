@@ -75,10 +75,18 @@ export class Game extends Scene {
 
     // Create the level
     this.platforms = this.levelManager.createLevel();
-    this.levelManager.createWalls();
 
-    // Create player (centered on ground)
-    this.player = new Player(this, 512, 700, "player", this.analogInput);
+    // Get player start position
+    const startPos = this.levelManager.getPlayerStartPosition();
+
+    // Create player at start position
+    this.player = new Player(
+      this,
+      startPos.x,
+      startPos.y,
+      "player",
+      this.analogInput
+    );
 
     // Create jump preview
     this.jumpPreview = new JumpPreview(this, this.player);
@@ -115,13 +123,6 @@ export class Game extends Scene {
     // Update debug display
     this.updateDebugDisplay();
 
-    // Check for game over (falling off the bottom)
-    if (this.player.y > this.cameras.main.scrollY + 900) {
-      this.scene.start("GameOver", {
-        level: this.registry.get("currentLevel"),
-      });
-    }
-
     // Check for level completion (reaching the top platform)
     if (this.player.y < 50) {
       this.nextLevel();
@@ -137,11 +138,8 @@ export class Game extends Scene {
       // Start next level
       this.scene.restart({ level: nextLevel });
     } else {
-      // Player has completed all levels
-      this.scene.start("GameOver", {
-        level: currentLevel,
-        victory: true,
-      });
+      // Player has completed all levels, return to main menu
+      this.scene.start("MainMenu");
     }
   }
 
