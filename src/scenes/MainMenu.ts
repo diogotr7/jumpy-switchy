@@ -4,9 +4,7 @@ import { LEVELS } from "../data/LevelData";
 
 export class MainMenu extends Scene {
   background: GameObjects.Image;
-  logo: GameObjects.Image;
   title: GameObjects.Text;
-  subtitle: GameObjects.Text;
   startText: GameObjects.Text;
   levelSelectText: GameObjects.Text;
   private analogInput: AnalogInput;
@@ -31,8 +29,6 @@ export class MainMenu extends Scene {
   create() {
     this.background = this.add.image(512, 384, "background");
 
-    this.logo = this.add.image(512, 200, "logo");
-
     this.title = this.add
       .text(512, 340, "Jumpy Switchy", {
         fontFamily: "Arial Black",
@@ -40,17 +36,6 @@ export class MainMenu extends Scene {
         color: "#ffffff",
         stroke: "#000000",
         strokeThickness: 8,
-        align: "center",
-      })
-      .setOrigin(0.5);
-
-    this.subtitle = this.add
-      .text(512, 400, "Analog Controller Demo", {
-        fontFamily: "Arial",
-        fontSize: 24,
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 6,
         align: "center",
       })
       .setOrigin(0.5);

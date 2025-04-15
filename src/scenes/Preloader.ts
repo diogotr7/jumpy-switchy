@@ -35,11 +35,7 @@ export class Preloader extends Scene {
     this.load.setPath("assets");
 
     // Load game assets
-    this.load.image("logo", "logo.png");
-    this.load.image(
-      "player",
-      "kenney_abstract-platformer/PNG/Players/playerBlue_stand.png"
-    );
+
     this.load.image(
       "blockBrown",
       "kenney_abstract-platformer/PNG/Other/blockBrown.png"
@@ -105,19 +101,72 @@ export class Preloader extends Scene {
     // Load platform tiles
     this.load.image(
       "tileBlue",
+      "kenney_abstract-platformer/PNG/Tiles/Blue tiles/tileBlue_02.png"
+    );
+
+    this.load.image(
+      "tileBlueLeft",
+      "kenney_abstract-platformer/PNG/Tiles/Blue tiles/tileBlue_15.png"
+    );
+    this.load.image(
+      "tileBlueMiddle",
       "kenney_abstract-platformer/PNG/Tiles/Blue tiles/tileBlue_05.png"
     );
     this.load.image(
+      "tileBlueRight",
+      "kenney_abstract-platformer/PNG/Tiles/Blue tiles/tileBlue_16.png"
+    );
+
+    this.load.image(
       "tileGreen",
+      "kenney_abstract-platformer/PNG/Tiles/Green tiles/tileGreen_02.png"
+    );
+
+    this.load.image(
+      "tileGreenLeft",
+      "kenney_abstract-platformer/PNG/Tiles/Green tiles/tileGreen_15.png"
+    );
+    this.load.image(
+      "tileGreenMiddle",
       "kenney_abstract-platformer/PNG/Tiles/Green tiles/tileGreen_05.png"
     );
     this.load.image(
+      "tileGreenRight",
+      "kenney_abstract-platformer/PNG/Tiles/Green tiles/tileGreen_16.png"
+    );
+
+    this.load.image(
       "tileYellow",
-      "kenney_abstract-platformer/PNG/Tiles/Yellow tiles/tileYellow_05.png"
+      "kenney_abstract-platformer/PNG/Tiles/Yellow tiles/tileYellow_03.png"
     );
     this.load.image(
+      "tileYellowLeft",
+      "kenney_abstract-platformer/PNG/Tiles/Yellow tiles/tileYellow_16.png"
+    );
+    this.load.image(
+      "tileYellowMiddle",
+      "kenney_abstract-platformer/PNG/Tiles/Yellow tiles/tileYellow_06.png"
+    );
+    this.load.image(
+      "tileYellowRight",
+      "kenney_abstract-platformer/PNG/Tiles/Yellow tiles/tileYellow_17.png"
+    );
+
+    this.load.image(
       "tileBrown",
-      "kenney_abstract-platformer/PNG/Tiles/Brown tiles/tileBrown_05.png"
+      "kenney_abstract-platformer/PNG/Tiles/Brown tiles/tileBrown_04.png"
+    );
+    this.load.image(
+      "tileBrownLeft",
+      "kenney_abstract-platformer/PNG/Tiles/Brown tiles/tileBrown_16.png"
+    );
+    this.load.image(
+      "tileBrownMiddle",
+      "kenney_abstract-platformer/PNG/Tiles/Brown tiles/tileBrown_02.png"
+    );
+    this.load.image(
+      "tileBrownRight",
+      "kenney_abstract-platformer/PNG/Tiles/Brown tiles/tileBrown_17.png"
     );
 
     // Create placeholder assets if they don't exist

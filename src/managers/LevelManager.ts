@@ -55,10 +55,36 @@ export class LevelManager {
         switch (element) {
           case LevelElement.GROUND:
             // For ground tiles, create a platform that's wider and centered correctly
-            this.createPlatform(worldX, worldY, 1, levelData.platformType);
+            this.createPlatform(
+              worldX,
+              worldY,
+              `${levelData.platformType}Middle`
+            );
             break;
           case LevelElement.PLATFORM:
-            this.createPlatform(worldX, worldY, 1, levelData.platformType);
+            // Create a regular platform
+            this.createPlatform(worldX, worldY, levelData.platformType);
+            break;
+          case LevelElement.PLATFORM_MIDDLE:
+            this.createPlatform(
+              worldX,
+              worldY,
+              `${levelData.platformType}Middle`
+            );
+            break;
+          case LevelElement.PLATFORM_LEFT:
+            this.createPlatform(
+              worldX,
+              worldY,
+              `${levelData.platformType}Left`
+            );
+            break;
+          case LevelElement.PLATFORM_RIGHT:
+            this.createPlatform(
+              worldX,
+              worldY,
+              `${levelData.platformType}Right`
+            );
             break;
           case LevelElement.WALL:
             this.createWall(worldX, worldY);
@@ -84,12 +110,7 @@ export class LevelManager {
     return this.platforms;
   }
 
-  private createPlatform(
-    x: number,
-    y: number,
-    width: number,
-    texture: string
-  ): void {
+  private createPlatform(x: number, y: number, texture: string): void {
     const platform = this.platforms.create(x, y, texture);
 
     // Get texture dimensions
