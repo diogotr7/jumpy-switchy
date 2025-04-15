@@ -38,12 +38,6 @@ export class Game extends Scene {
     this.endTriggerActive = false;
   }
 
-  preload() {
-    // Load game specific assets
-    this.load.image("player", "assets/player.png");
-    this.load.image("platform", "assets/platform.png");
-  }
-
   create() {
     this.camera = this.cameras.main;
 

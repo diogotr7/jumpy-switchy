@@ -35,7 +35,7 @@ export class Preloader extends Scene {
     this.load.setPath("assets");
 
     // Load game assets
-
+    this.load.image("player", "switchy/SwitchyCool.png");
     this.load.image(
       "blockBrown",
       "kenney_abstract-platformer/PNG/Other/blockBrown.png"
