@@ -43,7 +43,7 @@ export class Preloader extends Scene {
 
     this.load.image(
       "exit",
-      "kenney_abstract-platformer/PNG/Items/redCrystal.png"
+      "kenney_abstract-platformer/PNG/Other/flagRed_up.png"
     );
 
     // Load level backgrounds - each level has background, hills, and tiles
@@ -173,6 +173,15 @@ export class Preloader extends Scene {
       "tileBrownRight",
       "kenney_abstract-platformer/PNG/Tiles/Brown tiles/tileBrown_17.png"
     );
+
+    for (const plantType of ["Blue", "Dark", "Green", "Red"]) {
+      for (let i = 1; i <= 6; i++) {
+        this.load.image(
+          `plant${plantType}${i}`,
+          `kenney_abstract-platformer/PNG/Other/plant${plantType}_${i}.png`
+        );
+      }
+    }
 
     // Create placeholder assets if they don't exist
     this.load.on("filecomplete", (_key: string) => {

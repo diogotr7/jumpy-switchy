@@ -99,6 +99,26 @@ export class LevelManager {
             // Create an end marker or trigger
             this.createEndTrigger(worldX, worldY);
             break;
+          case LevelElement.FOLIAGE:
+            //each foliage tile has a 10% chance of being placed.
+            // when it is placed, it can be one of 6.
+            if (Math.random() > 0.1) break;
+
+            const foliageIndex = Math.floor(Math.random() * 6) + 1;
+            const foliageType = `plant${levelData.foliageType}${foliageIndex}`;
+            const foliage = this.scene.add.sprite(worldX, worldY, foliageType);
+            // Get texture dimensions
+            const textureWidth = foliage.width;
+            const textureHeight = foliage.height;
+
+            // Calculate scaling to match grid size
+            const scaleX = GRID_SIZE / textureWidth;
+            const scaleY = GRID_SIZE / textureHeight;
+
+            // Apply the calculated scale
+            foliage.setScale(scaleX, scaleY);
+
+            break;
         }
       }
     }
