@@ -1,46 +1,96 @@
-import { Scene } from 'phaser';
+import { Scene } from "phaser";
 
-export class Preloader extends Scene
-{
-    constructor ()
-    {
-        super('Preloader');
+export class Preloader extends Scene {
+  constructor() {
+    super("Preloader");
+  }
+
+  init() {
+    // Add background
+    this.add.image(512, 384, "background");
+
+    // Progress bar outline
+    this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+
+    // Progress bar fill
+    const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
+
+    // Update progress bar as assets load
+    this.load.on("progress", (value: number) => {
+      bar.width = 4 + 460 * value;
+      bar.x = 512 - 230 + (460 * value) / 2;
+    });
+
+    // Loading text
+    this.add
+      .text(512, 340, "Loading...", {
+        fontFamily: "Arial",
+        fontSize: 20,
+        color: "#ffffff",
+      })
+      .setOrigin(0.5);
+  }
+
+  preload() {
+    this.load.setPath("assets");
+
+    // Load game assets
+    this.load.image("logo", "logo.png");
+    this.load.image("player", "player.png");
+    this.load.image("platform", "platform.png");
+
+    // Create placeholder assets if they don't exist
+    this.load.on("filecomplete", (_key: string) => {
+      // We'll use this to handle missing files
+    });
+
+    this.load.on("loaderror", (file: Phaser.Loader.File) => {
+      // Create placeholder images for missing files
+      if (file.key === "player") {
+        this.createPlayerImage();
+      } else if (file.key === "platform") {
+        this.createPlatformImage();
+      }
+    });
+  }
+
+  create() {
+    // Create any missing assets
+    if (!this.textures.exists("player")) {
+      this.createPlayerImage();
     }
 
-    init ()
-    {
-        //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
-
-        //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
-
-        //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512-230, 384, 4, 28, 0xffffff);
-
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
-        this.load.on('progress', (progress: number) => {
-
-            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-            bar.width = 4 + (460 * progress);
-
-        });
+    if (!this.textures.exists("platform")) {
+      this.createPlatformImage();
     }
 
-    preload ()
-    {
-        //  Load the assets for the game - Replace with your own assets
-        this.load.setPath('assets');
+    // Move to Connect Keyboard screen
+    this.scene.start("MainMenu");
+  }
 
-        this.load.image('logo', 'logo.png');
-    }
+  private createPlayerImage() {
+    // Create a simple player sprite
+    const graphics = this.make.graphics({ x: 0, y: 0 });
+    graphics.fillStyle(0x4488ff);
+    graphics.fillRect(0, 0, 32, 64);
+    graphics.fillStyle(0x3366cc);
+    graphics.fillRect(0, 32, 32, 32);
 
-    create ()
-    {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
+    // Generate texture
+    graphics.generateTexture("player", 32, 64);
+    graphics.destroy();
+  }
 
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
-    }
+  private createPlatformImage() {
+    // Create a simple platform sprite
+    const graphics = this.make.graphics({ x: 0, y: 0 });
+    graphics.fillStyle(0x00aa00);
+    graphics.fillRect(0, 0, 128, 32);
+    graphics.fillStyle(0x008800);
+    graphics.fillRect(0, 16, 128, 16);
+
+    // Generate texture
+    graphics.generateTexture("platform", 128, 32);
+    graphics.destroy();
+  }
 }
