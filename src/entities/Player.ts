@@ -35,7 +35,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setGravityY(800);
     body.setCollideWorldBounds(false);
-    body.setBounce(0.3, 0.1); // X bounce of 0.5 (50%), Y bounce of 0.1 (10%)
+    body.setBounce(0.4, 0.1);
     body.setSize(32, 64);
     body.setFriction(0, 0);
   }

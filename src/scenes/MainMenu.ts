@@ -105,6 +105,7 @@ export class MainMenu extends Scene {
         this.startText.setText("Click to Start");
         this.startText.setAlpha(1);
         this.startText.setInteractive({ useHandCursor: true });
+        this.startText.off("pointerdown");
         this.startText.on("pointerdown", () => {
           this.scene.start("Game");
         });
