@@ -18,9 +18,18 @@ export class Game extends Scene {
   // UI elements
   debugText: Phaser.GameObjects.Text;
   instructionsText: Phaser.GameObjects.Text;
+  levelText: Phaser.GameObjects.Text;
 
   constructor() {
     super("Game");
+  }
+
+  init(data: { level?: number }) {
+    // Get level from data or use level 0
+    const levelIndex = data.level || 0;
+
+    // Store the level in registry for game over
+    this.registry.set("currentLevel", levelIndex);
   }
 
   preload() {
@@ -31,7 +40,6 @@ export class Game extends Scene {
 
   create() {
     this.camera = this.cameras.main;
-    this.camera.setBackgroundColor(0x87ceeb); // Sky blue
 
     // Add background
     this.background = this.add.image(512, 384, "background");
@@ -40,8 +48,14 @@ export class Game extends Scene {
     // Get the analog input system from registry
     this.analogInput = this.registry.get("analogInput") || new AnalogInput();
 
-    // Create level
+    // Create level manager
     this.levelManager = new LevelManager(this);
+
+    // Set current level
+    const levelIndex = this.registry.get("currentLevel") || 0;
+    this.levelManager.setLevel(levelIndex);
+
+    // Create the level
     this.platforms = this.levelManager.createLevel();
     this.levelManager.createWalls();
 
@@ -63,6 +77,14 @@ export class Game extends Scene {
 
     // Add instruction text
     this.createInstructions();
+
+    // Add level display
+    this.createLevelText();
+
+    // Add keyboard input for level switching (for testing)
+    this.input.keyboard?.on("keydown-N", () => {
+      this.nextLevel();
+    });
   }
 
   update(time: number, delta: number) {
@@ -77,7 +99,31 @@ export class Game extends Scene {
 
     // Check for game over (falling off the bottom)
     if (this.player.y > this.cameras.main.scrollY + 900) {
-      this.scene.start("GameOver");
+      this.scene.start("GameOver", {
+        level: this.registry.get("currentLevel"),
+      });
+    }
+
+    // Check for level completion (reaching the top platform)
+    if (this.player.y < 50) {
+      this.nextLevel();
+    }
+  }
+
+  private nextLevel(): void {
+    const currentLevel = this.registry.get("currentLevel") || 0;
+    const nextLevel = currentLevel + 1;
+
+    // Check if there are more levels
+    if (nextLevel < this.levelManager.getTotalLevels()) {
+      // Start next level
+      this.scene.restart({ level: nextLevel });
+    } else {
+      // Player has completed all levels
+      this.scene.start("GameOver", {
+        level: currentLevel,
+        victory: true,
+      });
     }
   }
 
@@ -114,10 +160,33 @@ export class Game extends Scene {
         512,
         50,
         "A/D: Move  |  SPACE: Charge Jump\n" +
-          "While charging: W controls height, A/D control direction",
+          "While charging: W controls height, A/D control direction\n" +
+          "Press N to skip to next level (testing)",
         {
           fontFamily: "Arial",
           fontSize: "18px",
+          backgroundColor: "#00000080",
+          padding: { x: 10, y: 5 },
+          color: "#ffffff",
+          align: "center",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(100);
+  }
+
+  private createLevelText() {
+    const level = this.registry.get("currentLevel") || 0;
+
+    this.levelText = this.add
+      .text(
+        512,
+        120,
+        `Level ${level + 1}/${this.levelManager.getTotalLevels()}`,
+        {
+          fontFamily: "Arial",
+          fontSize: "24px",
           backgroundColor: "#00000080",
           padding: { x: 10, y: 5 },
           color: "#ffffff",
