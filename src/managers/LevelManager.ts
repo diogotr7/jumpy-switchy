@@ -99,10 +99,6 @@ export class LevelManager {
             // Create an end marker or trigger
             this.createEndTrigger(worldX, worldY);
             break;
-          case LevelElement.COIN:
-            // Create a coin at this position
-            this.createCoin(worldX, worldY);
-            break;
         }
       }
     }
@@ -151,7 +147,7 @@ export class LevelManager {
 
   private createEndTrigger(x: number, y: number): void {
     // Create a visual element for the end trigger
-    const endTrigger = this.scene.add.sprite(x, y, "tileYellow");
+    const endTrigger = this.scene.add.sprite(x, y, "exit");
 
     // Get texture dimensions
     const textureWidth = endTrigger.width;
@@ -172,31 +168,6 @@ export class LevelManager {
       alpha: 0.5,
       duration: 1000,
       yoyo: true,
-      repeat: -1,
-    });
-  }
-
-  private createCoin(x: number, y: number): void {
-    // This is a placeholder - implement coin creation if needed
-    const coin = this.scene.add.sprite(x, y, "tileYellow");
-
-    // Get texture dimensions
-    const textureWidth = coin.width;
-    const textureHeight = coin.height;
-
-    // Calculate scaling - we want coins to be 30% of a grid cell
-    const targetSize = GRID_SIZE * 0.3;
-    const scaleX = targetSize / textureWidth;
-    const scaleY = targetSize / textureHeight;
-
-    // Apply the calculated scale
-    coin.setScale(scaleX, scaleY);
-
-    // Add a rotation animation
-    this.scene.tweens.add({
-      targets: coin,
-      angle: 360,
-      duration: 2000,
       repeat: -1,
     });
   }

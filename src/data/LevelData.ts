@@ -12,7 +12,6 @@ export enum LevelElement {
   PLATFORM_RIGHT = "R", // Right platform
   PLATFORM_MIDDLE = "M", // Middle platform
   WALL = "W", // Wall block
-  COIN = "C", // Bonus coin
   END = "E", // End trigger
   PLAYER = "S", // Player start position
 }

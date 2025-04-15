@@ -41,6 +41,11 @@ export class Preloader extends Scene {
       "kenney_abstract-platformer/PNG/Other/blockBrown.png"
     );
 
+    this.load.image(
+      "exit",
+      "kenney_abstract-platformer/PNG/Items/redCrystal.png"
+    );
+
     // Load level backgrounds - each level has background, hills, and tiles
     // Level 1
     this.load.image(
