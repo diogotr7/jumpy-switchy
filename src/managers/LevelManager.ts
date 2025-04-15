@@ -91,18 +91,39 @@ export class LevelManager {
     texture: string
   ): void {
     const platform = this.platforms.create(x, y, texture);
-    // Make platforms fill their grid cells horizontally but thinner vertically
-    platform.setScale(1, 0.5);
-    // Set collision size to match the visual size, accounting for the scale
+
+    // Get texture dimensions
+    const textureWidth = platform.width;
+    const textureHeight = platform.height;
+
+    // Calculate scaling to match grid size
+    const scaleX = GRID_SIZE / textureWidth;
+    const scaleY = GRID_SIZE / textureHeight;
+
+    // Apply the calculated scale
+    platform.setScale(scaleX, scaleY);
+
+    // Set collision size to match the grid dimensions
     platform.setSize(GRID_SIZE, GRID_SIZE * 0.5);
     platform.refreshBody();
   }
 
   private createWall(x: number, y: number): void {
-    // For walls, we need to create a taller element that extends the full height
+    // For walls, we need to create a element that extends the full grid cell
     const wall = this.platforms.create(x, y, "blockBrown");
-    // Make the wall the full cell width to avoid gaps
-    wall.setScale(0.5, 0.5);
+
+    // Get texture dimensions
+    const textureWidth = wall.width;
+    const textureHeight = wall.height;
+
+    // Calculate scaling to match grid size
+    const scaleX = GRID_SIZE / textureWidth;
+    const scaleY = GRID_SIZE / textureHeight;
+
+    // Apply the calculated scale
+    wall.setScale(scaleX, scaleY);
+
+    // Set collision size to match the grid dimensions
     wall.setSize(GRID_SIZE, GRID_SIZE);
     wall.refreshBody();
   }
@@ -110,7 +131,18 @@ export class LevelManager {
   private createEndTrigger(x: number, y: number): void {
     // Create a visual element for the end trigger
     const endTrigger = this.scene.add.sprite(x, y, "tileYellow");
-    endTrigger.setScale(0.75);
+
+    // Get texture dimensions
+    const textureWidth = endTrigger.width;
+    const textureHeight = endTrigger.height;
+
+    // Calculate scaling - we want the end trigger to be 75% of a grid cell
+    const targetSize = GRID_SIZE * 0.75;
+    const scaleX = targetSize / textureWidth;
+    const scaleY = targetSize / textureHeight;
+
+    // Apply the calculated scale
+    endTrigger.setScale(scaleX, scaleY);
     endTrigger.setAlpha(0.8);
 
     // Add a subtle animation to make it more visible
@@ -126,7 +158,18 @@ export class LevelManager {
   private createCoin(x: number, y: number): void {
     // This is a placeholder - implement coin creation if needed
     const coin = this.scene.add.sprite(x, y, "tileYellow");
-    coin.setScale(0.3);
+
+    // Get texture dimensions
+    const textureWidth = coin.width;
+    const textureHeight = coin.height;
+
+    // Calculate scaling - we want coins to be 30% of a grid cell
+    const targetSize = GRID_SIZE * 0.3;
+    const scaleX = targetSize / textureWidth;
+    const scaleY = targetSize / textureHeight;
+
+    // Apply the calculated scale
+    coin.setScale(scaleX, scaleY);
 
     // Add a rotation animation
     this.scene.tweens.add({

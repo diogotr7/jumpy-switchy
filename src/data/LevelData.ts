@@ -1,7 +1,7 @@
 // Grid constants
 export const GRID_SIZE = 32; // Size of each grid cell in pixels
 export const GRID_WIDTH = 32; // Number of cells wide
-export const GRID_HEIGHT = 24; // Number of cells tall
+export const GRID_HEIGHT = 32; // Number of cells tall
 
 // Level element types
 export enum LevelElement {
