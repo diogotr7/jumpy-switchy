@@ -37,8 +37,9 @@ export class LevelManager {
 
     // Create all elements from the grid
     for (let y = 0; y < grid.length; y++) {
-      for (let x = 0; x < grid[y].length; x++) {
-        const element = grid[y][x];
+      const row = grid[y];
+      for (let x = 0; x < row.length; x++) {
+        const element = row[x];
         const worldX = x * GRID_SIZE + GRID_SIZE / 2;
         const worldY = y * GRID_SIZE + GRID_SIZE / 2;
 
