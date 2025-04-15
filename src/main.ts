@@ -15,6 +15,9 @@ const config: Types.Core.GameConfig = {
     arcade: {
       gravity: { y: 800, x: 0 },
       debug: false,
+      fps: 120, // Fixed physics update rate
+      timeScale: 1, // Normal time scale
+      fixedStep: true, // Use fixed time step for physics updates
     },
   },
   scale: {

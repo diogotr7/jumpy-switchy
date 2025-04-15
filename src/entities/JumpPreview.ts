@@ -2,11 +2,13 @@ import { Player } from "./Player";
 
 export class JumpPreview {
   private player: Player;
+  private scene: Phaser.Scene;
   private graphics: Phaser.GameObjects.Graphics;
   private previewPoints: Phaser.Math.Vector2[] = [];
 
   constructor(scene: Phaser.Scene, player: Player) {
     this.player = player;
+    this.scene = scene;
     this.graphics = scene.add.graphics();
   }
 
@@ -27,26 +29,23 @@ export class JumpPreview {
     // Calculate trajectory preview
     this.calculateTrajectory(playerX, playerY, jumpDirection);
 
-    // Draw trajectory line
-    const color = Phaser.Display.Color.GetColor(255, 255, 255);
-    const alpha = 0.6;
+    // Draw trajectory line with border
+    this.drawTrajectoryWithBorder();
 
-    this.graphics.lineStyle(2, color, alpha);
-
-    // Draw trajectory path
+    // Draw arrow at the tip of the trajectory
     if (this.previewPoints.length > 1) {
-      this.graphics.beginPath();
-      this.graphics.moveTo(this.previewPoints[0].x, this.previewPoints[0].y);
+      // Get the direction at the tip by using the last two points
+      const lastPoint = this.previewPoints[this.previewPoints.length - 1];
+      const secondLastPoint = this.previewPoints[this.previewPoints.length - 2];
 
-      for (let i = 1; i < this.previewPoints.length; i++) {
-        this.graphics.lineTo(this.previewPoints[i].x, this.previewPoints[i].y);
-      }
+      // Calculate direction vector at the end of trajectory
+      const tipDirection = new Phaser.Math.Vector2(
+        lastPoint.x - secondLastPoint.x,
+        lastPoint.y - secondLastPoint.y
+      ).normalize();
 
-      this.graphics.strokePath();
+      this.drawArrow(lastPoint.x, lastPoint.y, tipDirection);
     }
-
-    // Draw arrow at start of trajectory
-    this.drawArrow(playerX, playerY, jumpDirection);
   }
 
   private calculateTrajectory(
@@ -57,7 +56,9 @@ export class JumpPreview {
     this.previewPoints = [];
 
     // Physics simulation values
-    const gravity = 800; // Should match player gravity
+    const gravity = this.scene.physics.world.gravity.y;
+    const fps = this.scene.game.config.physics.arcade?.fps || 60;
+    const isDebug = this.scene.game.config.physics.arcade?.debug || false;
     const baseJumpPower = 600; // Should match player jumpPower
 
     // Initial velocity components
@@ -65,8 +66,8 @@ export class JumpPreview {
     const velocityY = direction.y * baseJumpPower;
 
     // Simulate trajectory
-    const numPoints = 20;
-    const timeStep = 0.05; // seconds per point
+    const numPoints = isDebug ? 10000 : 100; // Number of points to simulate
+    const timeStep = 1 / fps; // seconds per point
 
     let posX = x;
     let posY = y;
@@ -86,40 +87,64 @@ export class JumpPreview {
     }
   }
 
+  private drawTrajectoryWithBorder(): void {
+    if (this.previewPoints.length <= 1) return;
+
+    // First draw a black border
+    this.graphics.lineStyle(4, 0x000000, 0.5);
+    this.graphics.beginPath();
+    this.graphics.moveTo(this.previewPoints[0].x, this.previewPoints[0].y);
+
+    for (let i = 1; i < this.previewPoints.length; i++) {
+      this.graphics.lineTo(this.previewPoints[i].x, this.previewPoints[i].y);
+    }
+
+    this.graphics.strokePath();
+
+    // Then draw the white line on top
+    this.graphics.lineStyle(2, 0xffffff, 0.6);
+    this.graphics.beginPath();
+    this.graphics.moveTo(this.previewPoints[0].x, this.previewPoints[0].y);
+
+    for (let i = 1; i < this.previewPoints.length; i++) {
+      this.graphics.lineTo(this.previewPoints[i].x, this.previewPoints[i].y);
+    }
+
+    this.graphics.strokePath();
+  }
+
   private drawArrow(
     x: number,
     y: number,
     direction: Phaser.Math.Vector2
   ): void {
-    const arrowLength = 30;
-    const color = Phaser.Display.Color.GetColor(255, 255, 255);
+    // Arrow head parameters
+    const headLength = 12;
 
-    // Draw main line
-    this.graphics.lineStyle(3, color, 0.8);
-    this.graphics.beginPath();
-    this.graphics.moveTo(x, y);
-
-    const endX = x + direction.x * arrowLength;
-    const endY = y + direction.y * arrowLength;
-
-    this.graphics.lineTo(endX, endY);
-    this.graphics.strokePath();
-
-    // Draw arrowhead
-    const headLength = 10;
+    // Calculate arrowhead points
     const angle = Math.atan2(direction.y, direction.x);
 
+    const leftX = x - headLength * Math.cos(angle - Math.PI / 6);
+    const leftY = y - headLength * Math.sin(angle - Math.PI / 6);
+    const rightX = x - headLength * Math.cos(angle + Math.PI / 6);
+    const rightY = y - headLength * Math.sin(angle + Math.PI / 6);
+
+    // Draw arrowhead border (black outline)
+    this.graphics.lineStyle(5, 0x000000, 0.8);
     this.graphics.beginPath();
-    this.graphics.moveTo(endX, endY);
-    this.graphics.lineTo(
-      endX - headLength * Math.cos(angle - Math.PI / 6),
-      endY - headLength * Math.sin(angle - Math.PI / 6)
-    );
-    this.graphics.moveTo(endX, endY);
-    this.graphics.lineTo(
-      endX - headLength * Math.cos(angle + Math.PI / 6),
-      endY - headLength * Math.sin(angle + Math.PI / 6)
-    );
+    this.graphics.moveTo(x, y);
+    this.graphics.lineTo(leftX, leftY);
+    this.graphics.lineTo(rightX, rightY);
+    this.graphics.closePath();
     this.graphics.strokePath();
+
+    // Fill arrowhead with white
+    this.graphics.fillStyle(0xffffff, 0.9);
+    this.graphics.beginPath();
+    this.graphics.moveTo(x, y);
+    this.graphics.lineTo(leftX, leftY);
+    this.graphics.lineTo(rightX, rightY);
+    this.graphics.closePath();
+    this.graphics.fillPath();
   }
 }
