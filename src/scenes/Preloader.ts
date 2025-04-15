@@ -72,12 +72,10 @@ export class Preloader extends Scene {
     // Create a simple player sprite
     const graphics = this.make.graphics({ x: 0, y: 0 });
     graphics.fillStyle(0x4488ff);
-    graphics.fillRect(0, 0, 32, 64);
-    graphics.fillStyle(0x3366cc);
-    graphics.fillRect(0, 32, 32, 32);
+    graphics.fillRect(0, 0, 32, 32);
 
     // Generate texture
-    graphics.generateTexture("player", 32, 64);
+    graphics.generateTexture("player", 32, 32);
     graphics.destroy();
   }
 
