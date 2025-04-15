@@ -18,8 +18,10 @@ const config: Types.Core.GameConfig = {
     },
   },
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 1024,
+    height: 768,
   },
   scene: [Boot, Preloader, MainMenu, Game],
 };

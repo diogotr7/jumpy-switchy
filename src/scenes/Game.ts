@@ -95,8 +95,12 @@ export class Game extends Scene {
     this.physics.add.collider(this.player, this.platforms);
 
     // Setup camera to follow player
-    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-    this.cameras.main.setDeadzone(100, 200);
+    this.cameras.main.startFollow(this.player, false, 0.1, 0.1);
+    this.cameras.main.setFollowOffset(0, 0);
+    this.cameras.main.setLerp(0.1, 0.1);
+    this.cameras.main.setDeadzone(0, 200);
+    this.cameras.main.setBounds(0, 0, 1024, 768);
+    this.cameras.main.setScroll(0, 0);
 
     // Add debug display
     this.createDebugDisplay();
