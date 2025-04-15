@@ -157,12 +157,6 @@ export class Game extends Scene {
         });
       }
     }
-
-    // Fallback for levels without end triggers (or for testing)
-    // Check if player reached the top platform (near where the end usually is)
-    if (this.player.y < 50) {
-      this.nextLevel();
-    }
   }
 
   private showLevelCompleteMessage(): void {
